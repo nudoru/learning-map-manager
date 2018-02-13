@@ -164,26 +164,6 @@ const getManagerForUserById = curry((config, uid) =>
 
 // Relies on custom table mwc_data
 // Course status 25 enrolled, 50>= completed
-/*
-Sample output
- { id: 92207,
- username: 'mperkins',
- fullname: 'Matt Perkins',
- firstname: 'Matt',
- lastname: 'Perkins',
- user_email: 'mperkins@redhat.com',
- hire_date: 1458532800,
- totara_id: 7830,
- oracle_idnumber: '4711898',
- course_fullname: 'Welcome to Red Hat Sales (vILT)',
- course_shortname: 'RHU-SA03-1000',
- course_id: 637,
- course_completion_enrolleddate: 1485874530,
- course_completion_status: 25,
- manager_id: 7741,
- manager_hierarchy: '/2499/9981/2592/3400/7741/7830',
- userid: 7830 }
- */
 const getMWCDataForUserById = curry((config, uid) =>
   createSDBQuery(config, 'mwc_data', {
     userid : 'eq.' + uid
@@ -191,28 +171,6 @@ const getMWCDataForUserById = curry((config, uid) =>
 
 // Relies on custom table course_status_report
 // Course status 25 enrolled, 50>= completed
-/*
-Sample
- { id: 92207,
- user_firstlast: 'Matt Perkins',
- userid: 7830,
- firstname: 'Matt',
- lastname: 'Perkins',
- learner_egion: 'NA',
- rh_office: 'Remote US NC',
- user_email: 'mperkins@redhat.com',
- portfolio: 'Sales',
- course: 'Welcome to Red Hat Sales (vILT)',
- course_id: 637,
- course_code: 'RHU-SA03-1000',
- course_completion_status: 25,
- enrollmentdate: 1485874530,
- mode_of_delivery: 'Virtual instructor-led',
- coursecompletiondate: null,
- duration: '1.00',
- managerhierarchy: '/2499/9981/2592/3400/7741/7830',
- learner_job_title: 'Learning and Development Specialist 4.213' }
- */
 const getUserCourseStatusByEmail = curry((config, email) =>
   createSDBQuery(config, 'course_status_report', {
     user_email : 'eq.' + email // eslint-disable-line camelcase
