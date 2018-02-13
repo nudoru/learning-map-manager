@@ -1,0 +1,38 @@
+$custom-table-color-even: transparent
+$custom-table-color-odd: rgba(0,0,0,.05)
+
+.rh-custom-table
+  width: 100%
+  margin: $base-line-height 0
+  margin-top: $base-line-height-double
+  padding: $base-line-height 0
+  overflow: hidden
+
+  thead
+    tr
+      td
+        +background-darkblue
+        overflow: hidden
+        padding: $base-line-height-half $base-line-height
+        font-size: 1.2rem
+        color: #fff
+        text-shadow: 1px 1px 0 rgba(0,0,0,1)
+        font-weight: 600
+        text-transform: uppercase
+        text-align: center
+  tr
+    background-color: $custom-table-color-even
+    border-bottom: 1px solid $grey-1
+    border-left: 1px solid $grey-1
+    border-right: 1px solid $grey-1
+  tr:nth-child(odd)
+    background-color: $custom-table-color-odd
+  td
+    padding: $base-line-height
+
+.table-small
+  td
+    @extend .small
+    padding: $base-line-height-half !important
+    a
+      @extend .small
