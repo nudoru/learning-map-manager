@@ -1,6 +1,6 @@
-# Winning With Containers Manager Reporting App Development
+# Learning Map Manager Reporting App Development
 
-This is the dashboard app for learning map applications specifically for WWC project. This is *only* the dashboard code, not the deployment package.
+This is the dashboard app for learning map applications. This is *only* the dashboard code, not the deployment package.
 
 **Ensure that the options in config.json match that of the corresponding learning map application**
 
@@ -13,10 +13,6 @@ On build, the `front/www/js/app` directory is cleaned and new code is bundled th
 
 JS Entry point is `front/app/index.js`
 SASS is `front/app/index.sass`
-
-## Dashboard source
-
-https://gitlab.cee.redhat.com/mperkins/mwc-manager-report
 
 ## Building
 
@@ -39,5 +35,5 @@ docker-compose -f docker-compose-build.yml [build | up | stop]
 1. Update dashboard (this project) as needed
 2. Build the project
 3. Copy front/www to the deploy project's front/www
-4. Push changes to https://gitlab.cee.redhat.com/mperkins/mwc-manager-report-app
+4. Push changes to server repo
 5. Trigger new build in OpenShift env, dev (stage) or prod
