@@ -1,4 +1,4 @@
-import { memoize, curry, concat } from 'ramda';
+import { memoize, curry, concat, lte, equals, prop } from 'ramda';
 import { cloneDeep } from 'lodash';
 import Either from 'data.either';
 import moment from 'moment';
@@ -10,7 +10,7 @@ import {
     floatRoundOne,
     floatRoundTwo
 } from '../utils/Toolbox';
-import { hasLength, idMatchObjId, noOp, stripHTML } from '../utils/AppUtils';
+import { hasLength, idMatchObjId, listMatchCourseId, noOp, stripHTML } from '../utils/AppUtils';
 import AppStore from './AppStore';
 import SetHierarchyTree from './actions/SetHierarchyTree';
 
@@ -196,8 +196,8 @@ const getCompletionStatement = statements => statements.filter(st => st.verb.dis
 const getClickedStatement    = statements => statements.filter(st => st.verb.display['en-US'] === 'clicked')[0];
 const getInteractionStatement    = statements => statements.filter(st => st.verb.display['en-US'] === 'responded')[0];
 
-const getLMSDataForLMSId = (records, contentid) =>
-    records.filter(r => r.course_id === contentid);
+const getLMSDataForLMSIds = (records, courseLMSIds) =>
+    records.filter(listMatchCourseId(courseLMSIds));
 
 const getLRSStatementsForContentLink = (records, id) =>
     records.filter(s => s.object.id === id);
@@ -271,8 +271,7 @@ export const getHydratedContentForUser = (user, content) => {
             lrsStatements = getLRSStatementsForContentLink(statements, lrsId),
             allegoStatement,
             bestStatement = getCompletionStatement(lrsStatements) || getClickedStatement(lrsStatements)||getInteractionStatement(lrsStatements),
-            lmsRecord     = getLMSDataForLMSId(lms, contobj.lmsID)[0]; // There will only be one
-
+            lmsRecords     = getLMSDataForLMSIds(lms, contobj.lmsID);
         o.lmsStatus        = 0;
         o.lmsStatusDate    = null;
         o.lrsStatus        = null;
@@ -297,22 +296,22 @@ export const getHydratedContentForUser = (user, content) => {
         if (bestStatement) {
             o.lrsStatus     = bestStatement.verb.display['en-US'];
             o.lrsStatusDate = moment(bestStatement.timestamp);
-            o.status        = 1;
+            o.status = 1;
             //console.log('COMPLETION!', o.lrsStatus, o.lrsStatusDate);
         }
 
-        if (lmsRecord) {
+        if (lmsRecords.length > 0) {
             o.status = 1;
-            if (lmsRecord.course_completion_status === 25) {
-                o.lmsStatus = 1;
-            } else if (lmsRecord.course_completion_status >= 50) {
-                o.lmsStatus = 2;
-            }
-
+            let lmsStatuses = lmsRecords.map(record => record.course_completion_status);
+            o.lmsStatus = lmsStatuses.some(lte(50)) ? 2 : (lmsStatuses.some(equals(25)) ? 1 : 0);
             if (o.lmsStatus === 2) {
                 // Totara dates are seconds since 1/1/70 12:00am
-                o.lmsStatusDate = moment(new Date(parseInt(lmsRecord.coursecompletiondate * 1000)));
+                o.lmsStatusDate = moment(new Date(parseInt(lmsRecords.find(record => record.course_completion_status >= 50).coursecompletiondate * 1000)));
             }
+        }
+
+        if (o.lmsID instanceof Array) {
+            o.lmsID = o.lmsID[0];
         }
 
         o.isComplete = o.lmsStatus === 2 || o.lrsStatus==='responded' || ( o.lrsStatus === 'clicked' && !o.requireConfirm || o.lrsStatus === 'completed' && o.requireConfirm) || o.allegoStatus.length > 0;

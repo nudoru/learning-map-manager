@@ -25,7 +25,7 @@ export const containsNoBadChars = (str) => badInputChars.some(char => contains(c
 export const hasLength = a => a.length ? true : false;
 // String, Object => true : false
 export const idMatchObjId = curry((id, obj) => id === obj.id);
-
+export const listMatchCourseId = curry((list, obj) => (list instanceof Array) ? list.includes(obj.course_id) : list === obj.course_id);
 //------------------------------------------------------------------------------
 // Utils
 //------------------------------------------------------------------------------
