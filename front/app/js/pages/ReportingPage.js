@@ -5,6 +5,7 @@ import {debounce} from 'lodash';
 import PageModule from '../rh-components/rh-PageModule';
 import {Col, Row} from '../rh-components/rh-Grid';
 import {Card} from '../rh-components/rh-Card';
+import Toggle from 'react-toggle';
 import Accordion, {AccordionVGroup} from '../rh-components/rh-Accordion';
 import {DropDown, Option, TextInput, VForm} from '../rh-components/rh-Form';
 import {StatusLabel} from '../rh-components/rh-Status';
@@ -31,25 +32,29 @@ const EmployeeRowTitle = ({name, pctComplete, status}) => (
     <li>{status}</li>
   </ul>);
 
-const FilterForm = ({onFilterChange, onStatusChange}) => (<VForm>
-  <fieldset>
-    <Row>
-      <Col className="padding-right">
-        <TextInput label="Name"
-                   onChange={onFilterChange}
-                   placeholder="Employee's name"
-                   help="Filter non-managers for full or partial matches on their full name."/>
-      </Col>
-      <Col className="padding-left">
-        <DropDown label="Activity Status" onChange={onStatusChange}
-                  help="Filter non-managers for activity level status.">
-          <Option value="">Everything</Option>
-          <Option value="complete">All Complete</Option>
-          <Option value="inprogress">Some In progress</Option>
-          <Option value="notstarted">None Started</Option>
-        </DropDown></Col>
-    </Row>
-  </fieldset>
+const FilterForm = ({onFilterChange, onStatusChange, onToggleChange,displayToggle}) => (<VForm>
+    <fieldset>
+        <Row>
+            <Col className="padding-right">
+                <TextInput label="Name"
+                           onChange={onFilterChange}
+                           placeholder="Employee's name"
+                           help="Filter non-managers for full or partial matches on their full name."/>
+            </Col>
+            <Col className="padding-left">
+                <DropDown label="Activity Status" onChange={onStatusChange}
+                          help="Filter non-managers for activity level status.">
+                    <Option value="">Everything</Option>
+                    <Option value="complete">All Complete</Option>
+                    <Option value="inprogress">Some In progress</Option>
+                    <Option value="notstarted">None Started</Option>
+                </DropDown></Col>
+        </Row>
+        {displayToggle ?
+            (<Row className="padding-top"><Col><label>Show only directs</label>
+                    <Toggle onChange={onToggleChange}/></Col></Row>
+            ) : null}
+    </fieldset>
 </VForm>);
 
 const StatisticsRow = ({stats}) => (
@@ -82,10 +87,14 @@ const StatisticsRow = ({stats}) => (
 
 class ReportingPage extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {nameFilter: '', statusFilter: ''};
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            nameFilter: '',
+            statusFilter: '',
+            showOnlyManagers: false
+        };
+    }
 
   _onFilterChange(e) {
     this.setState({nameFilter: e.target.value});
@@ -95,11 +104,16 @@ class ReportingPage extends React.Component {
     this.setState({statusFilter: e.target.value});
   }
 
+  _onToggleChange(){
+      this.setState({showOnlyManagers:!this.state.showOnlyManagers})
+  }
+
   _isFiltering() {
     return this.state.nameFilter.length > 0 || this.state.statusFilter.length > 0;
   }
 
   _userObjMatchesFilter(user) {
+
     let matchName    = true,
         matchStatus  = true,
         userMergedData,
@@ -112,6 +126,7 @@ class ReportingPage extends React.Component {
     }
 
     if (statusFilter.length) {
+
       userMergedData = getUserObjectByEmail(user.email);
       switch (statusFilter) {
         case 'complete':
@@ -136,27 +151,28 @@ class ReportingPage extends React.Component {
         employees     = AppStore.getState().hierarchy.employees,
         tree          = AppStore.getState().hierarchy.tree,
         currentUser   = AppStore.getState().currentuser,
-        firstLevelMgr = true,
+        firstLevelMgr,
+        displayOnlyDirects,
         treeToRender,
         treeNotCurrentUser,
         treeCurrentUser;
-
     treeCurrentUser    = Object.keys(tree).filter(key => key === currentUser.email);
     treeNotCurrentUser = Object.keys(tree).filter(key => key !== currentUser.email);
 
-    if (treeNotCurrentUser.length === 0) {
-      // A first level manager
-      treeToRender = treeCurrentUser;
-    } else {
-      // A second level manager
-      treeToRender  = treeNotCurrentUser;
-      firstLevelMgr = false;
-    }
+      firstLevelMgr = treeNotCurrentUser.length === 0? true:false;
+
+      if (firstLevelMgr || this.state.showOnlyManagers) {
+          treeToRender = treeCurrentUser;
+          displayOnlyDirects=true;
+      } else {
+          treeToRender  = treeNotCurrentUser;
+          displayOnlyDirects=false;
+      }
 
     treeToRender.sort();
 
     // For 2nd level and above, add data for their directs
-    if (!firstLevelMgr) {
+    if (!displayOnlyDirects) {
       treeToRender.unshift(currentUser.email);
     }
 
@@ -175,7 +191,10 @@ class ReportingPage extends React.Component {
               <Col className="">
                 <Card hControls={<FilterForm
                   onFilterChange={this._onFilterChange.bind(this)}
-                  onStatusChange={this._onStatusChange.bind(this)}/>}
+                  onStatusChange={this._onStatusChange.bind(this)}
+                  onToggleChange={this._onToggleChange.bind(this)}
+                  displayToggle = {!firstLevelMgr}
+                />}
                       title={'Team report for ' + currentUser.fullname}>
                   <p className='margin-bottom text-center'>Note: Learner
                     completions are updated every night at 1am EST.</p>
@@ -204,12 +223,12 @@ class ReportingPage extends React.Component {
                         accordionActive = filteredEmployees.length > 0;
                       }
 
-                      if (!firstLevelMgr && mgrProfile) {
+                      if (!displayOnlyDirects && mgrProfile) {
                         mgrName  = mgrProfile.firstname + ' ' + mgrProfile.lastname;
                         mgrEmail = mgrProfile.email;
                       }
 
-                      if (firstLevelMgr) {
+                      if (displayOnlyDirects) {
                         return (<div>
                           <div className="text-center margin-bottom">
                             <em>{filterMessage}</em></div>
@@ -262,7 +281,10 @@ const EmployeesList = ({filteredEmployees, structure}) => (
           status =
             <StatusLabel>Not started</StatusLabel>;
         }
-
+        // TODO structure is common to all the people, does it make sense to pass it through store?
+        //console.log(structure);
+        //console.log(employee);
+       // console.log(userObject);
         return (
           <Accordion title={<EmployeeRowTitle
             name={employee.firstname + ' ' + employee.lastname}
