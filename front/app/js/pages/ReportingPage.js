@@ -130,7 +130,7 @@ class ReportingPage extends React.Component {
         }
         return matchName && matchStatus;
     }
-
+// specify "displayOnlyDirectSubs": true in the setup of the config to show only direct subordinates
     render() {
         let structure     = getCurrentStructure(),
             state = AppStore.getState(),
