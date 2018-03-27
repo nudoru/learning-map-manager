@@ -80,6 +80,7 @@ export const getContentObjById = id =>
         .fold(
             () => {
                 // It won't be found if it's not required and show only required is on
+                // Or if it's not active
                 //console.warn('Content with ID ' + id + ' not found!');
                 return {};
             },
@@ -90,6 +91,7 @@ export const getUserContentObjById = (user, id) =>
         .fold(
             () => {
                 // It won't be found if it's not required and show only required is on
+                // Or if it's not active
                 //console.warn('Content with ID ' + id + ' not found!');
                 return {};
             },
@@ -272,6 +274,11 @@ export const getHydratedContentForUser = (user, content) => {
             allegoStatement,
             bestStatement = getCompletionStatement(lrsStatements) || getClickedStatement(lrsStatements)||getInteractionStatement(lrsStatements),
             lmsRecords     = getLMSDataForLMSIds(lms, contobj.lmsID);
+
+        if(!o.active) {
+            return acc;
+        }
+
         o.lmsStatus        = 0;
         o.lmsStatusDate    = null;
         o.lrsStatus        = null;

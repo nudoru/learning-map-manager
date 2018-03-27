@@ -76,7 +76,7 @@ class Bootstrap extends React.Component {
 
   // Start the app or load the configuration file
   fetchConfig() {
-    fetchConfigData(configFile+'json').fork(e => {
+    fetchConfigData(configFile+'.json').fork(e => {
         this.setState({isLoading: false, isError: true});
         console.error('Error loading config file: ', e);
       },
