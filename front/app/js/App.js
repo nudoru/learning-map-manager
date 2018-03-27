@@ -173,7 +173,15 @@ class App extends React.Component {
   render() {
     if (this.state.isDataLoaded && this.state.isProfileLoaded) {
       resetId();
-      return <AppRouter config={this.props.config}/>;
+      //return <AppRouter config={this.props.config}/>;
+      return (<div className="application-container">
+        <AppHeader config={this.props.config}/>
+        <div className="application-content">
+            <ReportingPage/>
+        </div>
+        <Footer/>
+      </div>);
+
     } else if (!this.state.isProfileLoaded) {
       return <LoadingProfileMessage/>;
     } else if (!this.state.isDataLoaded) {
