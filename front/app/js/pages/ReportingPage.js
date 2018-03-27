@@ -179,13 +179,16 @@ class ReportingPage extends React.Component {
                                     onFilterChange={this._onFilterChange.bind(this)}
                                     onStatusChange={this._onStatusChange.bind(this)}/>}
                                       title={'Team report for ' + currentUser.fullname}>
-                                    <p className='margin-bottom text-center'>Note: Learner
+                                    
+                                      <Introduction text={structure.introduction}
+                                      instructions={structure.instructions}/>
+                                    
+                                      <p className='margin-bottom text-center'>Note: Learner
                                         completions are updated every night at 1am EST.</p>
 
                                     <StatisticsRow
                                         stats={getStatsForUsersByEmail(allVisibleEmployeesEmail)}/>
-                                    <Introduction text={structure.introduction}
-                                                  instructions={structure.instructions}/>
+                                    
                                     {
                                         treeToRender.map(mgr => {
 

@@ -1,0 +1,43 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node',
+1 verbose cli   '/usr/local/bin/npm',
+1 verbose cli   'run',
+1 verbose cli   'build:prod' ]
+2 info using npm@5.5.1
+3 info using node@v9.1.0
+4 verbose config Skipping project config: /usr/src/app/.npmrc. (matches userconfig)
+5 verbose run-script [ 'prebuild:prod', 'build:prod', 'postbuild:prod' ]
+6 info lifecycle react-starter-2-app@0.1.0~prebuild:prod: react-starter-2-app@0.1.0
+7 verbose lifecycle react-starter-2-app@0.1.0~prebuild:prod: unsafe-perm in lifecycle true
+8 verbose lifecycle react-starter-2-app@0.1.0~prebuild:prod: PATH: /usr/local/lib/node_modules/npm/bin/node-gyp-bin:/usr/src/app/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+9 verbose lifecycle react-starter-2-app@0.1.0~prebuild:prod: CWD: /usr/src/app
+10 silly lifecycle react-starter-2-app@0.1.0~prebuild:prod: Args: [ '-c', 'npm run clean-www' ]
+11 silly lifecycle react-starter-2-app@0.1.0~prebuild:prod: Returned: code: 0  signal: null
+12 info lifecycle react-starter-2-app@0.1.0~build:prod: react-starter-2-app@0.1.0
+13 verbose lifecycle react-starter-2-app@0.1.0~build:prod: unsafe-perm in lifecycle true
+14 verbose lifecycle react-starter-2-app@0.1.0~build:prod: PATH: /usr/local/lib/node_modules/npm/bin/node-gyp-bin:/usr/src/app/node_modules/.bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+15 verbose lifecycle react-starter-2-app@0.1.0~build:prod: CWD: /usr/src/app
+16 silly lifecycle react-starter-2-app@0.1.0~build:prod: Args: [ '-c', 'webpack --env.prod -p' ]
+17 info lifecycle react-starter-2-app@0.1.0~build:prod: Failed to exec build:prod script
+18 verbose stack Error: react-starter-2-app@0.1.0 build:prod: `webpack --env.prod -p`
+18 verbose stack spawn ENOENT
+18 verbose stack     at ChildProcess.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-lifecycle/lib/spawn.js:48:18)
+18 verbose stack     at emitTwo (events.js:135:13)
+18 verbose stack     at ChildProcess.emit (events.js:224:7)
+18 verbose stack     at maybeClose (internal/child_process.js:943:16)
+18 verbose stack     at Process.ChildProcess._handle.onexit (internal/child_process.js:220:5)
+19 verbose pkgid react-starter-2-app@0.1.0
+20 verbose cwd /usr/src/app
+21 verbose Linux 4.9.60-linuxkit-aufs
+22 verbose argv "/usr/local/bin/node" "/usr/local/bin/npm" "run" "build:prod"
+23 verbose node v9.1.0
+24 verbose npm  v5.5.1
+25 error file sh
+26 error code ELIFECYCLE
+27 error errno ENOENT
+28 error syscall spawn
+29 error react-starter-2-app@0.1.0 build:prod: `webpack --env.prod -p`
+29 error spawn ENOENT
+30 error Failed at the react-starter-2-app@0.1.0 build:prod script.
+30 error This is probably not a problem with npm. There is likely additional logging output above.
+31 verbose exit [ 1, true ]
