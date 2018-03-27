@@ -8,7 +8,7 @@ import {fetchConfigData} from './services/fetchConfig';
 import AppStore from './store/AppStore';
 import SetConfig from './store/actions/SetConfig';
 
-let configFile = 'config.json';
+let configFile = 'config';
 
 const LoadingMessage = () =>
   <PleaseWaitModal><h1>Please wait ...</h1>
@@ -76,7 +76,7 @@ class Bootstrap extends React.Component {
 
   // Start the app or load the configuration file
   fetchConfig() {
-    fetchConfigData(configFile).fork(e => {
+    fetchConfigData(configFile+'json').fork(e => {
         this.setState({isLoading: false, isError: true});
         console.error('Error loading config file: ', e);
       },
