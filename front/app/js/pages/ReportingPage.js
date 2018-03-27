@@ -142,7 +142,8 @@ class ReportingPage extends React.Component {
             treeToRender,
             treeNotCurrentUser,
             treeCurrentUser,
-            displayOnlyDirectSubs = state.config.setup.displayOnlyDirectSubs;
+            displayOnlyDirectSubs = state.config.setup.displayOnlyDirectSubs,
+            instructions = (structure.introduction || structure.instructions) ? <Introduction text={structure.introduction} instructions={structure.instructions}/> : null;
 
         treeCurrentUser    = Object.keys(tree).filter(key => key === currentUser.email);
         treeNotCurrentUser = Object.keys(tree).filter(key => key !== currentUser.email);
@@ -179,9 +180,9 @@ class ReportingPage extends React.Component {
                                     onFilterChange={this._onFilterChange.bind(this)}
                                     onStatusChange={this._onStatusChange.bind(this)}/>}
                                       title={'Team report for ' + currentUser.fullname}>
-                                    
-                                      <Introduction text={structure.introduction}
-                                      instructions={structure.instructions}/>
+
+                                    {instructions}
+                                      
                                     
                                       <p className='margin-bottom text-center'>Note: Learner
                                         completions are updated every night at 1am EST.</p>
