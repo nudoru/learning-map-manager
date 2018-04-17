@@ -32,18 +32,18 @@ const EmployeeRowTitle = ({name, pctComplete, status}) => (
         <li>{status}</li>
     </ul>);
 
-const FilterForm = ({onFilterChange, onStatusChange}) => (<VForm>
+const FilterForm = ({onFilterChange, onStatusChange}) => (<div className='rh-vform'>
     <fieldset>
         <Row>
             <Col className="padding-right">
                 <TextInput label="Name"
                            onChange={onFilterChange}
                            placeholder="Employee's name"
-                           help="Filter non-managers for full or partial matches on their full name."/>
+                           help="Filter for full or partial matches on full name."/>
             </Col>
             <Col className="padding-left">
                 <DropDown label="Activity Status" onChange={onStatusChange}
-                          help="Filter non-managers for activity level status.">
+                          help="Filter for activity level status.">
                     <Option value="">Everything</Option>
                     <Option value="complete">All Complete</Option>
                     <Option value="inprogress">Some In progress</Option>
@@ -51,7 +51,7 @@ const FilterForm = ({onFilterChange, onStatusChange}) => (<VForm>
                 </DropDown></Col>
         </Row>
     </fieldset>
-</VForm>);
+</div>);
 
 const StatisticsRow = ({stats}) => (
     <Card style="bars" className='margin-bottom-double'>
@@ -176,14 +176,13 @@ class ReportingPage extends React.Component {
                     <div className="color-bg-body">
                         <Row>
                             <Col className="">
+                                {instructions}
+
                                 <Card hControls={<FilterForm
                                     onFilterChange={this._onFilterChange.bind(this)}
                                     onStatusChange={this._onStatusChange.bind(this)}/>}
                                       title={'Team report for ' + currentUser.fullname}>
 
-                                    {instructions}
-                                      
-                                    
                                       <p className='margin-bottom text-center'>Note: Learner
                                         completions are updated every night at 1am EST.</p>
 
