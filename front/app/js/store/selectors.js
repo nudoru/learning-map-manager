@@ -265,7 +265,7 @@ export const getHydratedContentForUser = (user, content) => {
         statements         = user[email].lrs,
         lms                = user[email].sdb,
         allego             = getAllegoLRSStatementsByEmail(email),
-        {showOnlyRequired} = AppStore.getState().config.setup.interface;
+        {showOnlyRequired, hideExcessiveItems} = AppStore.getState().config.setup.interface;
 
     return content.reduce((acc, contobj) => {
         let o             = Object.assign({}, contobj),
@@ -326,10 +326,10 @@ export const getHydratedContentForUser = (user, content) => {
             o.interactionResponse = bestStatement.result.response;
         }
         o.status = o.isComplete ? 2 : o.status;
-
-        if (showOnlyRequired && o.isRequired) {
+        let hideItem = hideExcessiveItems && o.isExcessive;
+        if (showOnlyRequired && o.isRequired && !hideItem) {
             acc.push(o);
-        } else if (!showOnlyRequired) {
+        } else if (!showOnlyRequired && !hideItem) {
             acc.push(o);
         }
 
