@@ -20,6 +20,7 @@ import {requestUserProfile} from './utils/learningservices/lms/GetUserProfile';
 import {getLearningForManagerHierarchy} from './utils/learningservices/shadow/GetHierarchy';
 import {requestCohortMembers} from './utils/learningservices/lms/GetCohortMembers';
 import {requestUsersLRS} from './utils/learningservices/lrs/RequestUsersLRS';
+import {sendFragment} from './utils/learningservices/lrs/LRS';
 
 const LoadingMessage = () =>
   <PleaseWaitModal><h1>Reticulating splines ...</h1>
@@ -120,10 +121,30 @@ class App extends React.Component {
     requestUserProfile(webservice, defaultuser, 'email').fork(console.error, res => {
       //console.log('got user profile', res[0]);
       AppStore.dispatch(SetCurrentUser(res[0]));
+      this._sendLoggedInStatement();
       this.setState({isProfileLoaded: true});
       this._loadHierarchyLearningData();
     });
   }
+
+    _sendLoggedInStatement() {
+        const state = AppStore.getState();
+        const fragment = {
+            verbDisplay: 'loggedin',
+            objectName: state.config.setup.title + ' Manager Dashboard',
+            objectType: 'page',
+            objectID: state.config.webservice.lrs.contextID + '#mngrdb',
+            subjectName: state.currentuser.fullname,
+            subjectID: state.currentuser.email
+        };
+        sendFragment(state.config.webservice.lrs, fragment)
+            .fork(e => {
+                    console.error('Error sending statement: ', e);
+                },
+                r => {
+                    console.log('Statement sent!', r);
+                });
+    }
 
   // Load the hierarchy and learner data for each direct report
   _loadHierarchyLearningData() {
